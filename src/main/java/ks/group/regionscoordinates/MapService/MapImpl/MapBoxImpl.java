@@ -7,6 +7,7 @@ import com.mapbox.geojson.Polygon;
 import ks.group.regionscoordinates.MapService.MapInterface.MapService;
 import ks.group.regionscoordinates.Model.Location;
 import ks.group.regionscoordinates.Model.Region;
+import ks.group.regionscoordinates.Tools.MyApiClass;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,7 +21,6 @@ import java.util.List;
 @Service
 public class MapBoxImpl implements MapService {
 
-    private final String accessToken = "ssk.eyJ1Ijoia2Fyb2xpc3NhZCIsImEiOiJjbGo2NWpqNDIwNGxmM2ttdWM5N200ZmIwIn0.79_s71hVWdmrAvN0f5VQWQ";
     double centerLongitude = 24.0;
     double centerLatitude = 55.0;
     int zoomLevel = 6;
@@ -60,7 +60,7 @@ public class MapBoxImpl implements MapService {
         String geoJsonString = featureCollection.toJson();
 
         String staticImageUrl = String.format("https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/geojson(%s)/%f,%f,%d/%dx%d?access_token=%s",
-                geoJsonString, centerLongitude, centerLatitude, zoomLevel, imageWidth, imageHeight, accessToken);
+                geoJsonString, centerLongitude, centerLatitude, zoomLevel, imageWidth, imageHeight, MyApiClass.API_KEY);
 
         try (InputStream inputStream = new URL(staticImageUrl).openStream()) {
             Path imagePath = Path.of("./IO/map_image.png");

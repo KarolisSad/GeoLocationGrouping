@@ -6,6 +6,7 @@ import ks.group.regionscoordinates.MapService.MapInterface.MapService;
 import ks.group.regionscoordinates.Model.Location;
 import ks.group.regionscoordinates.Model.LocationRegionRelationship;
 import ks.group.regionscoordinates.Model.Region;
+import ks.group.regionscoordinates.Tools.MyApiClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -36,9 +37,21 @@ public class RegionsCoordinatesApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        locationFileLocation = (args.length > 0) ? args[0] : "./IO/locations.txt";
-        regionFileLocation = (args.length > 1) ? args[1] : "./IO/regions.txt";
-        outputFileLocation = (args.length > 2) ? args[2] : "./IO/result.txt";
+        if (args.length == 1)
+        {
+            MyApiClass.setApiKey(args[0]);
+            locationFileLocation = "./IO/locations.txt";
+            regionFileLocation = "./IO/regions.txt";
+            outputFileLocation = "./IO/result.txt";
+        }
+        else {
+            locationFileLocation = (args.length > 0) ? args[0] : "./IO/locations.txt";
+            regionFileLocation = (args.length > 1) ? args[1] : "./IO/regions.txt";
+            outputFileLocation = (args.length > 2) ? args[2] : "./IO/result.txt";
+            MyApiClass.setApiKey((args.length > 3) ? args[3] : "");
+        }
+
+
 
         // Reading Files
         try {
@@ -71,7 +84,11 @@ public class RegionsCoordinatesApplication implements CommandLineRunner {
         // Output
         System.out.println("\n\nAll Region-Location matches were found!");
         System.out.println(fileMessage);
+
+        if (!MyApiClass.API_KEY.equals(""))
+        {
         System.out.println("Your map visualisation can be found: "+ imageInfo);
+        }
 
     }
 }

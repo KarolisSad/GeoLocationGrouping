@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class MapBoxImpl implements MapService {
 
-    private final String accessToken = "sk.eyJ1Ijoia2Fyb2xpc3NhZCIsImEiOiJjbGo2NWpqNDIwNGxmM2ttdWM5N200ZmIwIn0.79_s71hVWdmrAvN0f5VQWQ";
+    private final String accessToken = "ssk.eyJ1Ijoia2Fyb2xpc3NhZCIsImEiOiJjbGo2NWpqNDIwNGxmM2ttdWM5N200ZmIwIn0.79_s71hVWdmrAvN0f5VQWQ";
     double centerLongitude = 24.0;
     double centerLatitude = 55.0;
     int zoomLevel = 6;
@@ -66,10 +66,9 @@ public class MapBoxImpl implements MapService {
             Path imagePath = Path.of("./IO/map_image.png");
             Files.deleteIfExists(imagePath);
             Files.copy(inputStream, imagePath);
-            return("Image saved to: " + imagePath.toAbsolutePath());
+            return "Image saved to: " + imagePath.toAbsolutePath();
         } catch (IOException e) {
-            e.printStackTrace();
-            return ("Error - image wasn't created \n 1) Try to delete previous image.");
+            return "Invalid access token. Please enter a valid Mapbox API key.";
         }
 
     }

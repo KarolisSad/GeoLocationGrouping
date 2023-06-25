@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ks.group</groupId>
-    <artifactId>Regions-Coordinates</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>GeoLocationGrouping</artifactId>
+    <version>1.0</version>
     <name>Regions-Coordinates</name>
     <description>Regions-Coordinates</description>
     <properties>

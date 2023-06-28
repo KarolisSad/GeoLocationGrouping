@@ -1,10 +1,7 @@
 [
   {
     "region": "region1",
-    "matched_locations": [
-  "location1",
-  "location2"
-]
+    "matched_locations": []
   },
   {
     "region": "region2",
@@ -12,6 +9,12 @@
   "location3",
   "location4",
   "location5"
+]
+  },
+  {
+    "region": "region2-Overlap",
+    "matched_locations": [
+  "location3"
 ]
   },
   {

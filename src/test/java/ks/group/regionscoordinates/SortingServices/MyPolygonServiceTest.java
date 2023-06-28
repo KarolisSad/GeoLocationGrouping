@@ -227,4 +227,29 @@ class MyPolygonServiceTest {
         assertEquals(0, result.get(0).getMatchedLocations().size());
     }
 
+    @Test
+    void sortLocationsByRegions_ManyLocation_Overlapping() {
+        // setup
+        Location testLocation1 = new Location();
+        Location testLocation2 = new Location();
+        Location testLocation3 = new Location();
+        Location testLocation4 = new Location();
+        testLocation1.setCoordinates(new double[] {25.63678240050834, 55.232818800439831});
+        testLocation2.setCoordinates(new double[] {25.63678240050834, 55.032818800439831});
+        testLocation3.setCoordinates(new double[] {25.33678240050834, 55.132818800439831});
+        testLocation4.setCoordinates(new double[] {25.73678240050834, 55.132818800439831});
+        regionList.add(suqareRegion);
+        locationsList.add(testLocation1);
+        locationsList.add(testLocation2);
+        locationsList.add(testLocation3);
+        locationsList.add(testLocation4);
+
+        // test
+        ArrayList<LocationRegionRelationship> result = underTest.sortLocationsByRegions(regionList, locationsList);
+
+        // verify
+        assertEquals(0, result.get(0).getMatchedLocations().size());
+    }
+
+
 }

@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -29,32 +30,26 @@ public class MapBoxImpl implements MapService {
 
     @Override
     public String createLocationRegionMap(ArrayList<Region> regionList, ArrayList<Location> locationList) {
-
         List<Feature> features = new ArrayList<>();
 
-        // Adding all point to the feature
-        for (int i=0; i<locationList.size(); i++)
-        {
-            Point pointToAdd = Point.fromLngLat(locationList.get(i).getCoordinates()[0],locationList.get(i).getCoordinates()[1]);
-            features.add(Feature.fromGeometry(pointToAdd));
-        }
+        // Adding all points to the features
+        locationList.stream()
+                .map(location -> Point.fromLngLat(location.getCoordinates()[0], location.getCoordinates()[1]))
+                .map(Feature::fromGeometry)
+                .forEach(features::add);
 
         // Going through all regions
-        for (int i=0; i<regionList.size(); i++)
-        {
-            // Going through all sub-regions
-            for (int j=0; j<regionList.get(i).getCoordinates().length; j++)
-            {
-                List<Point> polygonPoints = new ArrayList<>();
-                // Going through coordinates
-                for (int c=0; c<regionList.get(i).getCoordinates()[j].length; c++)
-                {
-                    polygonPoints.add(Point.fromLngLat(regionList.get(i).getCoordinates()[j][c][0],regionList.get(i).getCoordinates()[j][c][1]));
-                }
-                Polygon polygon = Polygon.fromLngLats(List.of(polygonPoints));
-                features.add(Feature.fromGeometry(polygon));
-            }
-        }
+        regionList.stream()
+                .flatMap(region -> Arrays.stream(region.getCoordinates()))
+                .forEach(subRegion -> {
+                    List<Point> polygonPoints = new ArrayList<>();
+                    // Going through coordinates
+                    Arrays.stream(subRegion)
+                            .map(coordinate -> Point.fromLngLat(coordinate[0], coordinate[1]))
+                            .forEach(polygonPoints::add);
+                    Polygon polygon = Polygon.fromLngLats(List.of(polygonPoints));
+                    features.add(Feature.fromGeometry(polygon));
+                });
 
         FeatureCollection featureCollection = FeatureCollection.fromFeatures(features);
         String geoJsonString = featureCollection.toJson();
@@ -71,4 +66,5 @@ public class MapBoxImpl implements MapService {
             return "Invalid access token. Please enter a valid Mapbox API key.";
         }
     }
+
 }

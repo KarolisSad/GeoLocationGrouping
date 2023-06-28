@@ -25,13 +25,6 @@ public class LocationRegionRelationship {
     }
 
 
-    @Override
-    public String toString() {
-        return "LocationRegionRelationship{" +
-                "region=" + region +
-                ", matchedLocations=" + matchedLocations +
-                '}';
-    }
 }
 
 

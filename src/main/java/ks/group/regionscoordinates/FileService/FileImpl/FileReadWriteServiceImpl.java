@@ -77,41 +77,24 @@ public ArrayList<Region> readRegionFile(String fileLoc) throws IOException {
     }
 
 
+    // Currently it prints to the output file with full details not only ID's
+    // The fallowing solutions would be possible
+    // - to make adapter - but seems overcomplicated solution.
+    // - make JSON structure that it would print as desired.
+    // I would like to get advice on best approach and implement it.
     @Override
     public String writeToFile(ArrayList<LocationRegionRelationship> list, String filePath) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("[\n");
-
-        for (int i = 0; i < list.size(); i++) {
-            LocationRegionRelationship relationship = list.get(i);
-            String regionName = relationship.getRegion().getName();
-            ArrayList<String> locationNames = new ArrayList<>();
-            for (Location location : relationship.getMatchedLocations()) {
-                locationNames.add(location.getName());
-            }
-
-            jsonBuilder.append("  {\n");
-            jsonBuilder.append("    \"region\": \"").append(regionName).append("\",\n");
-            jsonBuilder.append("    \"matched_locations\": ").append(gson.toJson(locationNames)).append("\n");
-            jsonBuilder.append("  }");
-
-            if (i < list.size() - 1) {
-                jsonBuilder.append(",");
-            }
-            jsonBuilder.append("\n");
-        }
-
-        jsonBuilder.append("]");
 
         try (FileWriter writer = new FileWriter(filePath)) {
-            writer.write(jsonBuilder.toString());
+            gson.toJson(list, writer);
             return "success";
         } catch (IOException e) {
             e.printStackTrace();
             return "Failed to write to the file.";
         }
     }
+
 
 
     // This approach seems to be quite expensive.

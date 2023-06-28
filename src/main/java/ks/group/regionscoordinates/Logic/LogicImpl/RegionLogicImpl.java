@@ -1,5 +1,6 @@
 package ks.group.regionscoordinates.Logic.LogicImpl;
 
+import io.vavr.control.Either;
 import ks.group.regionscoordinates.Logic.LogicInterface.RegionLogicInterface;
 import ks.group.regionscoordinates.Model.Location;
 import ks.group.regionscoordinates.Model.LocationRegionRelationship;
@@ -8,10 +9,7 @@ import ks.group.regionscoordinates.SortingServices.MyPolygonService;
 import ks.group.regionscoordinates.SortingServices.PolygonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-
 import java.util.ArrayList;
-
 
 @Service
 public class RegionLogicImpl implements RegionLogicInterface {
@@ -22,17 +20,13 @@ public class RegionLogicImpl implements RegionLogicInterface {
     MyPolygonService myPolygonService;
 
     @Override
-    public ArrayList<LocationRegionRelationship> sortLocationsByRegions(ArrayList<Region> regions, ArrayList<Location> locations) throws Exception {
-
+    public Either<String,ArrayList<LocationRegionRelationship>> sortLocationsByRegions(ArrayList<Region> regions, ArrayList<Location> locations) {
         String errorMessage = validateData(regions,locations);
         if (!errorMessage.equals("success"))
         {
-            throw new Exception(errorMessage);
+            return Either.left(errorMessage);
         }
-
-        return myPolygonService.sortLocationsByRegions(regions,locations);
-
-
+        return Either.right(myPolygonService.sortLocationsByRegions(regions,locations));
     }
 
     private String validateData(ArrayList<Region> regions, ArrayList<Location> locations)

@@ -1,5 +1,6 @@
 package ks.group.regionscoordinates;
 
+import io.vavr.control.Either;
 import ks.group.regionscoordinates.FileService.FileInterface.FileReadWriteSerivce;
 import ks.group.regionscoordinates.Logic.LogicInterface.RegionLogicInterface;
 import ks.group.regionscoordinates.MapService.MapInterface.MapService;
@@ -32,8 +33,8 @@ public class RegionsCoordinatesApplication implements CommandLineRunner {
     private String locationFileLocation;
     private String regionFileLocation;
     private String outputFileLocation;
-    private ArrayList<Location> locations;
-    ArrayList<Region> regions;
+    private Either<String,ArrayList<Location>> locations;
+    private Either<String, ArrayList<Region>> regions;
 
 
     @Override
@@ -60,45 +61,51 @@ public class RegionsCoordinatesApplication implements CommandLineRunner {
             MyApiClass.setApiKey((args.length > 3) ? args[3] : "");
         }
 
-
-
-        // Reading Files
-        try {
-            this.locations= fileService.readLocationFile(locationFileLocation);
-            this.regions = fileService.readRegionFile(regionFileLocation);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        // Reading location & region files from the path
+        this.locations = fileService.readLocationFile(locationFileLocation);
+        this.regions = fileService.readRegionFile(regionFileLocation);
+        //  If the value is not present - Failed to read the file.
+        if (!locations.left().isEmpty())
+        {
+            System.out.println(locations.left().get());
+            System.exit(0);
+        }
+        if (!regions.left().isEmpty())
+        {
+            System.out.println(regions.left().get());
             System.exit(0);
         }
 
-        // Main logic
-        ArrayList<LocationRegionRelationship> result = null;
-        try {
-            result = regionLogic.sortLocationsByRegions(regions,locations);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+        // Using ray tracing algorithm to solve point in polygon problem.
+        Either<String,ArrayList<LocationRegionRelationship>> result = regionLogic.sortLocationsByRegions(regions.right().get(), locations.right().get());
+        if (!result.left().isEmpty())
+        {
+            System.out.println(result.left().get());
             System.exit(0);
         }
 
-        // Writing to file
-        String fileMessage = fileService.writeToFile(result,outputFileLocation);
+
+        // Writing generated results to the file
+        String fileMessage = fileService.writeToFile(result.right().get(),outputFileLocation);
         if (fileMessage.equals("success"))
         {
             fileMessage = "Data has been successfully written to: " + outputFileLocation;
         }
 
-        // Creating MAP
-        String imageInfo = mapService.createLocationRegionMap(regions,locations);
+        // Generating MapBox map (if API key is provided) with all provided regions & coordinates
+        // If invalid token - message will be stored inside imageInfo
+        String imageInfo = mapService.createLocationRegionMap(regions.right().get(),locations.right().get());
 
-        // Output
+        // Output for the user
         System.out.println("\n\nAll Region-Location matches were found!");
         System.out.println(fileMessage);
-
         if (!MyApiClass.API_KEY.equals(""))
         {
             System.out.println("Your map visualisation can be found: "+ imageInfo);
         }
     }
+
 
     private String validateInput(String arg1, String arg2, String arg3) {
         StringBuilder errorMessage = new StringBuilder();

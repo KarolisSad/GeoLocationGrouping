@@ -70,7 +70,5 @@ public class MapBoxImpl implements MapService {
         } catch (IOException e) {
             return "Invalid access token. Please enter a valid Mapbox API key.";
         }
-
     }
-
 }

@@ -6,7 +6,6 @@ public class LocationRegionRelationship {
     private Region region;
     private ArrayList<Location> matchedLocations;
 
-
     public LocationRegionRelationship(Region region, ArrayList<Location> matchedLocations) {
         this.region = region;
         this.matchedLocations = matchedLocations;

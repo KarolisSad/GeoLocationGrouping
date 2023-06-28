@@ -7,6 +7,8 @@ public class Region {
     private double[][][] coordinates;
 
     public Region(String name, double[][][] coordinates) {
+        System.out.println("added");
+        System.out.println("name " + name);
         this.name = name;
         this.coordinates = coordinates;
     }

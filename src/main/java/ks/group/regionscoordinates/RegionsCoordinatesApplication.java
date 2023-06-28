@@ -12,6 +12,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -44,6 +45,14 @@ public class RegionsCoordinatesApplication implements CommandLineRunner {
             regionFileLocation = "./IO/regions.txt";
             outputFileLocation = "./IO/result.txt";
         }
+        else if(args.length == 3 || args.length == 4)
+        {
+            System.out.println(validateInput(args[0], args[1], args[2]));
+            locationFileLocation = "./IO/locations.txt";
+            regionFileLocation = "./IO/regions.txt";
+            outputFileLocation = "./IO/result.txt";
+            MyApiClass.setApiKey((args.length > 3) ? args[3] : "");
+        }
         else {
             locationFileLocation = (args.length > 0) ? args[0] : "./IO/locations.txt";
             regionFileLocation = (args.length > 1) ? args[1] : "./IO/regions.txt";
@@ -55,8 +64,8 @@ public class RegionsCoordinatesApplication implements CommandLineRunner {
 
         // Reading Files
         try {
-        this.locations= fileService.readLocationFile(locationFileLocation);
-        this.regions = fileService.readRegionFile(regionFileLocation);
+            this.locations= fileService.readLocationFile(locationFileLocation);
+            this.regions = fileService.readRegionFile(regionFileLocation);
         } catch (IOException e) {
             System.out.println(e.getMessage());
             System.exit(0);
@@ -87,8 +96,31 @@ public class RegionsCoordinatesApplication implements CommandLineRunner {
 
         if (!MyApiClass.API_KEY.equals(""))
         {
-        System.out.println("Your map visualisation can be found: "+ imageInfo);
+            System.out.println("Your map visualisation can be found: "+ imageInfo);
+        }
+    }
+
+    private String validateInput(String arg1, String arg2, String arg3) {
+        StringBuilder errorMessage = new StringBuilder();
+
+        if (!fileExists(arg1)) {
+            errorMessage.append("\nLocation file wasn't found - default path is set. (IO Folder)\n");
         }
 
+        if (!fileExists(arg2)) {
+            errorMessage.append("Region file wasn't found - default path is set. (IO Folder).\n");
+        }
+
+        if (!fileExists(arg3)) {
+            errorMessage.append("Output file wasn't found - default path is set. (IO Folder).\n");
+        }
+
+        return errorMessage.toString();
     }
+
+    private boolean fileExists(String filePath) {
+        File file = new File(filePath);
+        return file.exists();
+    }
+
 }

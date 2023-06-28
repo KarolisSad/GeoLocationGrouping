@@ -73,7 +73,6 @@ public class FileReadWriteServiceImpl implements FileReadWriteSerivce {
 
     }
 
-
     // Currently it prints to the output file with full details not only ID's
     // The fallowing solutions would be possible
     // - to make adapter - but seems overcomplicated solution.
@@ -90,8 +89,6 @@ public class FileReadWriteServiceImpl implements FileReadWriteSerivce {
             return "Failed to write to the file.";
         }
     }
-
-
 
     // This approach seems to be quite expensive.
     // Other option I was considering is to use validation inside Model - but this would require throw.

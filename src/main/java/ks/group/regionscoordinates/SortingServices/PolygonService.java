@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PolygonService {
@@ -22,31 +24,16 @@ public class PolygonService {
     private final GeometryFactory geometryFactory = new GeometryFactory();
     private final WKTReader wktReader = new WKTReader(geometryFactory);
 
-    public ArrayList<LocationRegionRelationship> sortLocationsByRegions(ArrayList<Region> regions, ArrayList<Location> locations)
-    {
-        ArrayList<LocationRegionRelationship> results = new ArrayList<>();
-
-        // Going through Regions
-        for (int i=0; i< regions.size(); i++)
-        {
-            ArrayList<Location> matchedLocations = new ArrayList<>();
-            ArrayList<String> regionsInWKT = jsonToWKT.regionToWKT(regions.get(i));
-            // Going through all Sub-Regions
-            for (int j=0; j<regionsInWKT.size(); j++)
-            {
-                // Getting coordinates
-                for (int c=0; c<locations.size(); c++)
-                {
-                    if (isPointInsidePolygon(regionsInWKT.get(j),locations.get(c).getCoordinates()[0],locations.get(c).getCoordinates()[1]))
-                    {
-                        matchedLocations.add(locations.get(c));
-                    }
-                }
-
-            }
-            results.add(new LocationRegionRelationship(regions.get(i),matchedLocations));
-        }
-        return results;
+    public ArrayList<LocationRegionRelationship> sortLocationsByRegions(ArrayList<Region> regions, ArrayList<Location> locations) {
+        return regions.stream()
+                .map(region -> {
+                    List<Location> matchedLocations = jsonToWKT.regionToWKT(region).stream()
+                            .flatMap(polygonWkt -> locations.stream()
+                                    .filter(location -> isPointInsidePolygon(polygonWkt, location.getCoordinates()[0], location.getCoordinates()[1])))
+                            .toList();
+                    return new LocationRegionRelationship(region, new ArrayList<>(matchedLocations));
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private boolean isPointInsidePolygon(String polygonWkt, double pointX, double pointY) {

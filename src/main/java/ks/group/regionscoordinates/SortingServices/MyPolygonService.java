@@ -4,36 +4,27 @@ import ks.group.regionscoordinates.Model.Location;
 import ks.group.regionscoordinates.Model.LocationRegionRelationship;
 import ks.group.regionscoordinates.Model.Region;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MyPolygonService {
 
 
-    public ArrayList<LocationRegionRelationship> sortLocationsByRegions(ArrayList<Region> regions, ArrayList<Location> locations)
-    {
-        ArrayList<LocationRegionRelationship> results = new ArrayList<>();
-        // Going through all Regions
-        for (int i=0; i< regions.size(); i++)
-        {
-            ArrayList<Location> foundLocations = new ArrayList<>();
-            // Going through all Sub-Regions
-            for (int j=0; j<regions.get(i).getCoordinates().length; j++)
-            {
-                // Going through coordinates
-                for (int c=0; c<locations.size(); c++)
-                {
-                    if (isPointInsidePolygon(regions.get(i).getCoordinates()[j],locations.get(c).getCoordinates()[0],locations.get(c).getCoordinates()[1]))
-                    {
-                        foundLocations.add(locations.get(c));
-                    }
-                }
-            }
-            results.add(new LocationRegionRelationship(regions.get(i),foundLocations));
-        }
-        return results;
+    public ArrayList<LocationRegionRelationship> sortLocationsByRegions(ArrayList<Region> regions, ArrayList<Location> locations) {
+        return regions.stream()
+                .map(region -> {
+                    List<Location> foundLocations = Arrays.stream(region.getCoordinates())
+                            .flatMap(subRegion -> locations.stream()
+                                    .filter(location -> isPointInsidePolygon(subRegion, location.getCoordinates()[0], location.getCoordinates()[1])))
+                            .toList();
+                    return new LocationRegionRelationship(region, new ArrayList<>(foundLocations));
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
     }
+
 
     private boolean isPointInsidePolygon(double[][] subRegion , double pointX, double pointY) {
         int n = subRegion.length;

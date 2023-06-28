@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 @Service
 public class MyPolygonService {
 
-
     public ArrayList<LocationRegionRelationship> sortLocationsByRegions(ArrayList<Region> regions, ArrayList<Location> locations) {
         return regions.stream()
                 .map(region -> {

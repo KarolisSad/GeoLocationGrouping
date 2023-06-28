@@ -12,7 +12,6 @@ public class LocationRegionRelationship {
         this.matchedLocations = matchedLocations;
     }
 
-
     public ArrayList<Location> getMatchedLocations() {
         return matchedLocations;
     }

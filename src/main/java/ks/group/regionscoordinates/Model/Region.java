@@ -1,8 +1,5 @@
 package ks.group.regionscoordinates.Model;
 
-import org.locationtech.jts.geom.Coordinate;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Region {
@@ -21,7 +18,6 @@ public class Region {
     public double[][][] getCoordinates() {
         return coordinates;
     }
-
 
     @Override
     public String toString() {

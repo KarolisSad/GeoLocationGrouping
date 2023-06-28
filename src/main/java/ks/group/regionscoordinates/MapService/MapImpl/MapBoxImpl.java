@@ -32,13 +32,11 @@ public class MapBoxImpl implements MapService {
     public String createLocationRegionMap(ArrayList<Region> regionList, ArrayList<Location> locationList) {
         List<Feature> features = new ArrayList<>();
 
-        // Adding all points to the features
         locationList.stream()
                 .map(location -> Point.fromLngLat(location.getCoordinates()[0], location.getCoordinates()[1]))
                 .map(Feature::fromGeometry)
                 .forEach(features::add);
 
-        // Going through all regions
         regionList.stream()
                 .flatMap(region -> Arrays.stream(region.getCoordinates()))
                 .forEach(subRegion -> {

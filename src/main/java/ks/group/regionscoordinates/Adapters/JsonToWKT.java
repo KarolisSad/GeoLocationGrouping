@@ -32,7 +32,6 @@ public class JsonToWKT {
             wktBuilder.append(")");
             wktList.add(wktBuilder.toString());
         }
-
         return wktList;
     }
 
